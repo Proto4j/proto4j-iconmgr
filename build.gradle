@@ -1,0 +1,95 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = 'io.github.proto4j'
+version = '0.1-SNAPSHOT'
+archivesBaseName = "proto4j-iconmgr"
+version = "0.1"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.xmlgraphics:batik-all:1.16'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// Remove this configuration to be able to build the project
+publishing {
+    repositories {
+        maven {
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/proto4j/proto4j-iconmgr")
+            credentials {
+                username = project.findProperty("p4j.user")
+                password = project.findProperty("p4j.iconmgr.key")
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifactId = 'proto4j-iconmgr'
+            groupId = 'io.github.proto4j'
+            version = '0.1'
+
+            pom {
+                name = 'Proto4j-IconManager'
+                packaging = 'jar'
+                artifactId = 'proto4j-iconmgr'
+                groupId = 'io.github.proto4j'
+                description = 'Java Library to manage and load Icons effectively.'
+                url = 'https://github.com/Proto4j/proto4j-iconmgr'
+
+                scm {
+                    connection = 'scm:git:https://github.com/Proto4j/proto4j-iconmgr'
+                    developerConnection = 'scm:git:https://github.com/Proto4j/proto4j-iconmgr'
+                    url = 'https://github.com/Proto4j/proto4j-iconmgr'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'Proto4j-Group'
+                        name = 'Proto4j'
+                        email = 'not@supported.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
